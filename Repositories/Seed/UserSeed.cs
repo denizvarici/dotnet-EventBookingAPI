@@ -18,7 +18,7 @@ namespace Repositories.Seed
                     Email = "admin@admin.com",
                     FirstName = "AdminFN",
                     LastName = "AdminLN",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123."),
+                    PasswordHash = "$2a$11$GJPTHZvIzHIGtLwR3jv10eMpJ492UDHHiKq1COGbEU.DOrAbNWAve",
                     RoleId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                     CreatedAt = new DateTime(2026, 2, 28, 0, 0, 0, DateTimeKind.Utc)
                 },
@@ -28,7 +28,7 @@ namespace Repositories.Seed
                     Email = "user@user.com",
                     FirstName = "UserFirstName",
                     LastName = "UserLastName",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("User123."),
+                    PasswordHash = "$2a$11$RjTs0WeKdh8jWChkHU7jQ.GY1f4g4locAdIcaoxXGaq9gS34JB92W",
                     RoleId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
                     CreatedAt = new DateTime(2026, 2, 28, 0, 0, 0, DateTimeKind.Utc)
                 }

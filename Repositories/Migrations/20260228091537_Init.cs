@@ -103,12 +103,26 @@ namespace Repositories.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Events",
+                columns: new[] { "Id", "AvailableSeats", "Capacity", "City", "CreatedAt", "Description", "EventDate", "Price", "Title", "UpdatedAt", "Venue" },
+                values: new object[] { new Guid("55555555-5555-5555-5555-555555555555"), 2000, 2000, "Tekirdag", new DateTime(2026, 2, 28, 0, 0, 0, 0, DateTimeKind.Utc), "Bilgisayar Muhendisleri Mezuniyet Etkinligi", new DateTime(2026, 12, 12, 0, 0, 0, 0, DateTimeKind.Utc), 100m, "Mezuniyet Etkinligi", null, "Corlu Muhendislik Fakultesi" });
+
+            migrationBuilder.InsertData(
                 table: "Roles",
                 columns: new[] { "Id", "CreatedAt", "Name", "UpdatedAt" },
                 values: new object[,]
                 {
                     { new Guid("11111111-1111-1111-1111-111111111111"), new DateTime(2026, 2, 28, 0, 0, 0, 0, DateTimeKind.Utc), "Admin", null },
                     { new Guid("22222222-2222-2222-2222-222222222222"), new DateTime(2026, 2, 28, 0, 0, 0, 0, DateTimeKind.Utc), "User", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "CreatedAt", "Email", "FirstName", "LastName", "PasswordHash", "RoleId", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { new Guid("33333333-3333-3333-3333-333333333333"), new DateTime(2026, 2, 28, 0, 0, 0, 0, DateTimeKind.Utc), "admin@admin.com", "AdminFN", "AdminLN", "$2a$11$GJPTHZvIzHIGtLwR3jv10eMpJ492UDHHiKq1COGbEU.DOrAbNWAve", new Guid("11111111-1111-1111-1111-111111111111"), null },
+                    { new Guid("44444444-4444-4444-4444-444444444444"), new DateTime(2026, 2, 28, 0, 0, 0, 0, DateTimeKind.Utc), "user@user.com", "UserFirstName", "UserLastName", "$2a$11$RjTs0WeKdh8jWChkHU7jQ.GY1f4g4locAdIcaoxXGaq9gS34JB92W", new Guid("22222222-2222-2222-2222-222222222222"), null }
                 });
 
             migrationBuilder.CreateIndex(

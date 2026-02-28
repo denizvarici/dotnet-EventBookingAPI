@@ -70,6 +70,21 @@ namespace Repositories.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Events");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("55555555-5555-5555-5555-555555555555"),
+                            AvailableSeats = 2000,
+                            Capacity = 2000,
+                            City = "Tekirdag",
+                            CreatedAt = new DateTime(2026, 2, 28, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Bilgisayar Muhendisleri Mezuniyet Etkinligi",
+                            EventDate = new DateTime(2026, 12, 12, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 100m,
+                            Title = "Mezuniyet Etkinligi",
+                            Venue = "Corlu Muhendislik Fakultesi"
+                        });
                 });
 
             modelBuilder.Entity("Entities.Concrete.Reservation", b =>
@@ -190,6 +205,28 @@ namespace Repositories.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
+                            CreatedAt = new DateTime(2026, 2, 28, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "admin@admin.com",
+                            FirstName = "AdminFN",
+                            LastName = "AdminLN",
+                            PasswordHash = "$2a$11$GJPTHZvIzHIGtLwR3jv10eMpJ492UDHHiKq1COGbEU.DOrAbNWAve",
+                            RoleId = new Guid("11111111-1111-1111-1111-111111111111")
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444444"),
+                            CreatedAt = new DateTime(2026, 2, 28, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "user@user.com",
+                            FirstName = "UserFirstName",
+                            LastName = "UserLastName",
+                            PasswordHash = "$2a$11$RjTs0WeKdh8jWChkHU7jQ.GY1f4g4locAdIcaoxXGaq9gS34JB92W",
+                            RoleId = new Guid("22222222-2222-2222-2222-222222222222")
+                        });
                 });
 
             modelBuilder.Entity("Entities.Concrete.Reservation", b =>

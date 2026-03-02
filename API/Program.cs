@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Repositories;
+using Security;
 using Services.Abstract;
 using Services.Concrete;
 
@@ -14,7 +15,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"));
 });
-
+builder.Services.AddAutoMapper(cfg => cfg.LicenseKey = SecureDataHolder.AutoMapperLicenceKey, AppDomain.CurrentDomain.GetAssemblies()); ;
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddEndpointsApiExplorer();

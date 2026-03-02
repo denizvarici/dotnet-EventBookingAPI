@@ -1,7 +1,9 @@
-﻿using Entities.Concrete;
+﻿using AutoMapper;
+using Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
 using Services.Abstract;
+using Services.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,37 +12,45 @@ namespace Services.Concrete
 {
     public class EventService : IEventService
     {
+        private readonly IMapper _mapper;
         private readonly ApplicationDbContext _context;
 
-        public EventService(ApplicationDbContext context)
+        public EventService(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
-        public async Task<List<Event>> GetAllAsync()
+        public async Task<List<EventResponseDto>> GetAllAsync()
         {
-            return await _context.Events.ToListAsync();
+            var data = await _context.Events.ToListAsync();
+            var responseDto = _mapper.Map<List<EventResponseDto>>(data);
+            return responseDto;
         }
-        public async Task<Event?> GetByIdAsync(Guid id)
+        public async Task<EventResponseDto?> GetByIdAsync(Guid id)
         {
-            return await _context.Events.FindAsync(id);
+            var data =  await _context.Events.FindAsync(id);
+            var responseDto = _mapper.Map<EventResponseDto>(data);
+            return responseDto;
         }
-        public async Task<Event> CreateAsync(Event entity)
+        public async Task<EventResponseDto> CreateAsync(EventCreateDto dto)
         {
+            var entity = _mapper.Map<Event>(dto);
             await _context.Events.AddAsync(entity);
             await _context.SaveChangesAsync();
-            return entity;
+            var responseDto = _mapper.Map<EventResponseDto>(entity);
+            return responseDto;
         }
-        public async Task<Event?> UpdateAsync(Event entity)
+        public async Task<EventResponseDto?> UpdateAsync(EventUpdateDto dto)
         {
-            var existing = await _context.Events.FindAsync(entity.Id);
+            var existing = await _context.Events.FindAsync(dto.Id);
             if(existing == null)
             {
                 return null;
             }
-
-            _context.Events.Update(entity);
+            _mapper.Map(dto, existing);
             await _context.SaveChangesAsync();
-            return entity;
+            var responseDto = _mapper.Map<EventResponseDto>(existing);
+            return responseDto;
         }
         public async Task<bool> DeleteAsync(Guid id)
         {
@@ -52,5 +62,7 @@ namespace Services.Concrete
             await _context.SaveChangesAsync();
             return true;
         }
+
+        
     }
 }

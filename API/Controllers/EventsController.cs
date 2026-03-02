@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstract;
+using Services.DTOs;
 
 namespace API.Controllers
 {
@@ -33,18 +34,18 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody]Event entity)
+        public async Task<IActionResult> Create([FromBody]EventCreateDto dto)
         {
-            var createdData = await _eventService.CreateAsync(entity);
+            var createdData = await _eventService.CreateAsync(dto);
             if (createdData == null) BadRequest();
-            return CreatedAtAction(nameof(Get), new { id = createdData.Id }, createdData);
+            return CreatedAtAction(nameof(Get), new { id = createdData!.Id }, createdData);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromRoute]Guid id,[FromBody]Event entity)
+        public async Task<IActionResult> Update([FromRoute]Guid id,[FromBody]EventUpdateDto dto)
         {
-            if (id != entity.Id) return BadRequest();
-            var updatedData = await _eventService.UpdateAsync(entity);
+            if (id != dto.Id) return BadRequest();
+            var updatedData = await _eventService.UpdateAsync(dto);
             if (updatedData == null) return NotFound();
             return Ok(updatedData);
         }

@@ -3,5 +3,6 @@
   <Project Path="Console/Console.csproj" Id="cdb1d25b-539a-4795-ad71-7d420f74828f" />
   <Project Path="Entities/Entities.csproj" />
   <Project Path="Repositories/Repositories.csproj" />
+  <Project Path="Security/Security.csproj" Id="abcb9378-a46a-41b4-a2c8-d22536735c69" />
   <Project Path="Services/Services.csproj" Id="f1627a57-ca09-4244-b402-297959cfe8a7" />
 </Solution>

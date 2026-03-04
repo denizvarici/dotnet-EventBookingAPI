@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Entities.Concrete;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
 using Services.Abstract;
@@ -13,11 +14,13 @@ namespace Services.Concrete
     public class EventService : IEventService
     {
         private readonly IMapper _mapper;
+        private readonly IValidationService _validationService;
         private readonly ApplicationDbContext _context;
 
-        public EventService(ApplicationDbContext context, IMapper mapper)
+        public EventService(ApplicationDbContext context, IMapper mapper, IValidationService validationService)
         {
             _context = context;
+            _validationService = validationService;
             _mapper = mapper;
         }
         public async Task<List<EventResponseDto>> GetAllAsync()
@@ -34,6 +37,7 @@ namespace Services.Concrete
         }
         public async Task<EventResponseDto> CreateAsync(EventCreateDto dto)
         {
+            await _validationService.ValidateAsync(dto); //reflection ile func başında otomatik yaptırabiliriz.
             var entity = _mapper.Map<Event>(dto);
             await _context.Events.AddAsync(entity);
             await _context.SaveChangesAsync();
@@ -42,6 +46,7 @@ namespace Services.Concrete
         }
         public async Task<EventResponseDto?> UpdateAsync(EventUpdateDto dto)
         {
+            await _validationService.ValidateAsync(dto);
             var existing = await _context.Events.FindAsync(dto.Id);
             if(existing == null)
             {

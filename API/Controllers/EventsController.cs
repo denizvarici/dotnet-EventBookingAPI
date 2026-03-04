@@ -1,8 +1,9 @@
 ﻿using Entities.Concrete;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstract;
-using Services.DTOs;
+using Services.DTOs.Event;
 
 namespace API.Controllers
 {
@@ -33,6 +34,7 @@ namespace API.Controllers
             return Ok(data);
         }
 
+        [Authorize(Roles ="Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody]EventCreateDto dto)
         {

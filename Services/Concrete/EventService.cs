@@ -4,7 +4,7 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
 using Services.Abstract;
-using Services.DTOs;
+using Services.DTOs.Event;
 using System;
 using System.Collections.Generic;
 using System.Text;

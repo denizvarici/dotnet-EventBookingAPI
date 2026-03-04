@@ -1,57 +1,105 @@
 using API.Middleware;
-using FluentValidation;
-using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
 using Security;
 using Services.Abstract;
 using Services.Concrete;
-using Services.Validators.Event;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Services.Jwt;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-
+//DI registry
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IValidationService, ValidationService>();
-builder.Services.AddControllers();
+
+//db context registry with SqlServer
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"));
 });
-builder.Services.AddAutoMapper(cfg => cfg.LicenseKey = SecureDataHolder.AutoMapperLicenceKey, AppDomain.CurrentDomain.GetAssemblies()); ;
-builder.Services.AddValidatorsFromAssemblyContaining<EventCreateDtoValidator>();
-//builder.Services.Configure<ApiBehaviorOptions>(options =>
-//{
-//    options.SuppressModelStateInvalidFilter = true;
-//});
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+//Auto mapper registry
+builder.Services.AddAutoMapper(cfg => cfg.LicenseKey = SecureDataHolder.AutoMapperLicenceKey, AppDomain.CurrentDomain.GetAssemblies()); ;
+
+
+//OpenApi Configuration
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApiDocument(config =>
+{
+    config.Title = "API";
+    config.Version = "v1";
+    config.AddSecurity("Bearer", new NSwag.OpenApiSecurityScheme
+    {
+        Type = NSwag.OpenApiSecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Description = "Enter JWT token"
+    });
+    config.OperationProcessors.Add(
+        new NSwag.Generation.Processors.Security.AspNetCoreOperationSecurityScopeProcessor("Bearer")
+    );
+});
+
+//Api controllers activation
+builder.Services.AddControllers();
+
+//jwt configuration
+builder.Services.AddScoped<JwtService>();
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
+builder.Services.AddAuthorization();
 
 
 var app = builder.Build();
+
+//middlewares
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-    app.UseSwaggerUi(options =>
-    {
-        // NSwag UI'ına Microsoft'un ürettiği OpenAPI dokümanını göster
-        options.DocumentPath = "/openapi/v1.json";
-    });
+    app.UseOpenApi();
+    app.UseSwaggerUi();
+    //app.MapOpenApi();
+    //app.UseSwaggerUi(options =>
+    //{
+    //    options.DocumentPath = "/openapi/v1.json";
+    //});
 }
 
 
+//last configurations
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+
+
 
 app.Run();
